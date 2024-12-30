@@ -75,10 +75,14 @@ st.write("#### Asset Clusters")
 st.write(clustered_assets)
 
 # Get the clusters for selected assets
-selected_clusters = clustered_assets[clustered_assets['Ticker'].isin(selected_tickers)]['Cluster'].values
+selected_clusters = clustered_assets[clustered_assets['Ticker'].isin(selected_tickers)]
+
+# Display the clusters for the selected assets
+st.write(f"#### Clusters for Selected Assets")
+st.write(selected_clusters)
 
 # Ensure that there are enough distinct clusters
-distinct_clusters = set(selected_clusters)
+distinct_clusters = set(selected_clusters['Cluster'].values)
 
 # If all selected assets belong to the same cluster, show a warning
 if len(distinct_clusters) == 1:
@@ -86,11 +90,10 @@ if len(distinct_clusters) == 1:
 
 # Recommend assets from a different cluster than the selected portfolio
 st.write("#### Recommended Assets for Diversification")
-recommended_assets = clustered_assets[~clustered_assets['Cluster'].isin(selected_clusters)]
+recommended_assets = clustered_assets[~clustered_assets['Cluster'].isin(distinct_clusters)]
 
 # If no recommended assets exist, display a message
 if recommended_assets.empty:
     st.write("No assets available for diversification. Try selecting a different set of assets.")
-
 else:
     st.write("Assets for diversification:", recommended_assets['Ticker'].tolist())
