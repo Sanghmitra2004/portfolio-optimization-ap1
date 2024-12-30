@@ -21,7 +21,7 @@ tickers = [
 ]
 
 # Select tickers for analysis
-selected_tickers = st.multiselect("Select Stocks to Analyze", tickers, default=tickers)
+selected_tickers = st.multiselect("Select Stocks to Analyze", tickers, default=tickers[:7])
 
 # Download historical data for selected tickers
 data = yf.download(tickers, start='2020-01-01', end='2024-01-01')
@@ -72,19 +72,23 @@ plt.figure(figsize=(10, 6))
 sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', vmin=-1, vmax=1)
 st.pyplot(plt)
 
+# Reshape the correlation matrix to be suitable for KMeans
+# Convert the correlation matrix into a 2D array where each asset's correlation values are treated as features
+corr_matrix_values = corr_matrix[selected_tickers].values
+
 # Use K-Means Clustering to identify groups of similar assets
 n_clusters = 3  # Change the number of clusters as needed
 kmeans = KMeans(n_clusters=n_clusters)
-kmeans.fit(corr_matrix)
+kmeans.fit(corr_matrix_values)
 clusters = kmeans.labels_
 
 # Create a DataFrame for clustering results
-clustered_assets = pd.DataFrame({'Ticker': tickers, 'Cluster': clusters})
+clustered_assets = pd.DataFrame({'Ticker': selected_tickers, 'Cluster': clusters})
 st.write("#### Asset Clusters")
 st.write(clustered_assets)
 
 # Get the clusters for selected assets
-selected_clusters = clustered_assets[clustered_assets['Ticker'].isin(selected_tickers)]['Cluster'].values
+selected_clusters = clustered_assets['Cluster'].values
 
 # Ensure that there are enough distinct clusters
 distinct_clusters = set(selected_clusters)
