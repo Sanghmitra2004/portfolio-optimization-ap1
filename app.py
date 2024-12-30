@@ -13,7 +13,13 @@ The app pulls historical stock data from various assets, calculates their return
 Users can select which stocks to analyze and receive diversification suggestions based on clustering.""")
 
 # List of all available stock tickers
-tickers = ['AAPL', 'AMZN', 'GOOGL', 'MSFT', 'TSLA', 'NFLX', 'SBUX', 'HD', 'FND', 'JCTC', 'WMT', 'COST', 'MCD', 'BABA', 'BKNG', 'TJX']
+# Expanded list of stocks from various sectors
+tickers = [
+    'AAPL', 'AMZN', 'GOOGL', 'MSFT', 'TSLA', 'NFLX', 'SBUX', 'HD', 'FND', 'JCTC',
+    'WMT', 'COST', 'MCD', 'BABA', 'BKNG', 'TJX', 'NVDA', 'INTC', 'V', 'MA', 'SPY',
+    'XOM', 'DIS', 'GE', 'PFE', 'JNJ', 'UNH', 'VZ', 'CSCO', 'CRM', 'PYPL', 'META',
+    'SQ', 'BA', 'UBER', 'LYFT', 'GM', 'F', 'T', 'KO', 'PEP', 'NKE', 'LVMH', 'GS', 'MS'
+]
 
 # Select tickers for analysis
 selected_tickers = st.multiselect("Select Stocks to Analyze", tickers, default=tickers)
