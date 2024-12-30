@@ -13,10 +13,8 @@ The app pulls historical stock data from various assets, calculates their return
 Users can select which stocks to analyze and receive diversification suggestions based on clustering.""")
 
 # List of all available stock tickers
-tickers = [ 'AAPL', 'AMZN', 'GOOGL', 'MSFT', 'TSLA', 'NFLX', 'SBUX', 'HD', 'FND', 'JCTC',
-    'WMT', 'COST', 'MCD', 'BABA', 'BKNG', 'TJX', 'NVDA', 'INTC', 'V', 'MA', 'SPY',
-    'XOM', 'DIS', 'GE', 'PFE', 'JNJ', 'UNH', 'VZ', 'CSCO', 'CRM', 'PYPL', 'META',
-    'SQ', 'BA', 'UBER', 'LYFT', 'GM', 'F', 'T', 'KO', 'PEP', 'NKE', 'LVMH', 'GS', 'MS']
+tickers = ['AAPL', 'AMZN', 'GOOGL', 'MSFT', 'TSLA', 'NFLX', 'SBUX', 'HD', 'FND', 'JCTC', 'WMT', 'COST', 'MCD', 'BABA', 'BKNG', 'TJX']
+
 # Select tickers for analysis
 selected_tickers = st.multiselect("Select Stocks to Analyze", tickers, default=tickers)
 
@@ -32,10 +30,6 @@ data = data['Close']
 
 # Calculate daily returns
 returns = data.pct_change().dropna()
-
-# Display a sample of the returns data to make sure everything is correct
-st.write("### Daily Returns Sample")
-st.write(returns.head())
 
 # Define equal weights for selected assets (make sure they sum to 1)
 weights = np.array([1.0 / len(selected_tickers)] * len(selected_tickers))
