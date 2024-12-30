@@ -68,16 +68,13 @@ if selected_stocks:
     # --- AI-driven Asset Recommendation Based on Clustering ---
     st.write("### AI-Driven Asset Recommendation Based on Clustering")
 
-    # Identify the clusters of the selected stocks
-    selected_clusters = clustered_assets[clustered_assets['Ticker'].isin(selected_stocks)]['Cluster'].unique()
+    # Recommend assets from the entire set excluding the selected ones
+    available_assets = [asset for asset in tickers if asset not in selected_stocks]
 
-    # Recommend assets from clusters different from the selected stocks' clusters
-    recommended_assets = clustered_assets[~clustered_assets['Cluster'].isin(selected_clusters)]
-
-    if recommended_assets.empty:
-        st.write("No assets available for diversification. Try selecting a different set of assets.")
-    else:
+    if available_assets:
         st.write("#### Recommended Assets for Diversification")
-        st.write(recommended_assets['Ticker'].tolist())  # Display the recommended assets
+        st.write(available_assets)  # Display the recommended assets
+    else:
+        st.write("No assets available for diversification. Try selecting a different set of assets.")
 else:
     st.write("Please select stocks to analyze.")
