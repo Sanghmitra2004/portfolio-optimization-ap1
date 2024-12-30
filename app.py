@@ -12,8 +12,13 @@ st.write("""This app helps users build and analyze a diversified investment port
 The app pulls historical stock data from various assets, calculates their returns, and applies a K-Means clustering algorithm to group assets based on return correlations.
 Users can select which stocks to analyze and receive diversification suggestions based on clustering.""")
 
-# List of all available stock tickers
-tickers = ['AAPL', 'AMZN', 'GOOGL', 'MSFT', 'TSLA', 'NFLX', 'SBUX', 'HD', 'FND', 'JCTC', 'WMT', 'COST', 'MCD', 'BABA', 'BKNG', 'TJX']
+# Expanded list of stocks from various sectors
+tickers = [
+    'AAPL', 'AMZN', 'GOOGL', 'MSFT', 'TSLA', 'NFLX', 'SBUX', 'HD', 'FND', 'JCTC',
+    'WMT', 'COST', 'MCD', 'BABA', 'BKNG', 'TJX', 'NVDA', 'INTC', 'V', 'MA', 'SPY',
+    'XOM', 'DIS', 'GE', 'PFE', 'JNJ', 'UNH', 'VZ', 'CSCO', 'CRM', 'PYPL', 'META',
+    'SQ', 'BA', 'UBER', 'LYFT', 'GM', 'F', 'T', 'KO', 'PEP', 'NKE', 'LVMH', 'GS', 'MS'
+]
 
 # Select tickers for analysis
 selected_tickers = st.multiselect("Select Stocks to Analyze", tickers, default=tickers)
