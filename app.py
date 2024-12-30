@@ -31,6 +31,10 @@ data = data['Close']
 # Calculate daily returns
 returns = data.pct_change().dropna()
 
+# Display a sample of the returns data to make sure everything is correct
+st.write("### Daily Returns Sample")
+st.write(returns.head())
+
 # Define equal weights for selected assets (make sure they sum to 1)
 weights = np.array([1.0 / len(selected_tickers)] * len(selected_tickers))
 
@@ -75,14 +79,10 @@ st.write("#### Asset Clusters")
 st.write(clustered_assets)
 
 # Get the clusters for selected assets
-selected_clusters = clustered_assets[clustered_assets['Ticker'].isin(selected_tickers)]
-
-# Display the clusters for the selected assets
-st.write(f"#### Clusters for Selected Assets")
-st.write(selected_clusters)
+selected_clusters = clustered_assets[clustered_assets['Ticker'].isin(selected_tickers)]['Cluster'].values
 
 # Ensure that there are enough distinct clusters
-distinct_clusters = set(selected_clusters['Cluster'].values)
+distinct_clusters = set(selected_clusters)
 
 # If all selected assets belong to the same cluster, show a warning
 if len(distinct_clusters) == 1:
@@ -90,10 +90,11 @@ if len(distinct_clusters) == 1:
 
 # Recommend assets from a different cluster than the selected portfolio
 st.write("#### Recommended Assets for Diversification")
-recommended_assets = clustered_assets[~clustered_assets['Cluster'].isin(distinct_clusters)]
+recommended_assets = clustered_assets[~clustered_assets['Cluster'].isin(selected_clusters)]
 
 # If no recommended assets exist, display a message
 if recommended_assets.empty:
     st.write("No assets available for diversification. Try selecting a different set of assets.")
+
 else:
     st.write("Assets for diversification:", recommended_assets['Ticker'].tolist())
