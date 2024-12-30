@@ -7,7 +7,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # This app helps users build and analyze a diversified investment portfolio using AI-driven asset recommendations.
-st.title("DiversifyAI")
+st.title("AssetFusion By Sanghmitra")
 st.write("""This app helps users build and analyze a diversified investment portfolio using AI-driven asset recommendations. 
 The app pulls historical stock data from various assets, calculates their returns, and applies a K-Means clustering algorithm to group assets based on return correlations. 
 Users can select which stocks to analyze and receive diversification suggestions based on clustering.""")
