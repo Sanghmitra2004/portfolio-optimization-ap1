@@ -5,7 +5,11 @@ import pandas as pd
 from sklearn.cluster import KMeans
 import seaborn as sns
 import matplotlib.pyplot as plt
-
+#This app is designed to help users build and analyze a diversified investment portfolio by using an AI-driven approach to asset recommendations.
+#The app pulls historical stock data from various assets, calculates their returns, and applies a machine learning clustering algorithm (K-Means) to group the assets based on their return correlations.
+st.title(" DiversifyAI")
+st.write("""This app is designed to help users build and analyze a diversified investment portfolio by using an AI-driven approach to asset recommendations. 
+The app pulls historical stock data from various assets, calculates their returns, and applies a machine learning clustering algorithm (K-Means) to group the assets based on their return correlations.""")
 # Define the stock tickers you want to analyze
 tickers = ['AAPL', 'AMZN', 'GOOGL', 'MSFT', 'TSLA', 'NFLX', 'SBUX', 'HD', 'FND', 'JCTC', 'WMT', 'COST', 'MCD', 'BABA', 'BKNG', 'TJX']  # Replace with your asset list
 
