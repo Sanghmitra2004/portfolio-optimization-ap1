@@ -5,18 +5,24 @@ import pandas as pd
 from sklearn.cluster import KMeans
 import seaborn as sns
 import matplotlib.pyplot as plt
-#This app is designed to help users build and analyze a diversified investment portfolio by using an AI-driven approach to asset recommendations.
-#The app pulls historical stock data from various assets, calculates their returns, and applies a machine learning clustering algorithm (K-Means) to group the assets based on their return correlations.
-st.title(" DiversifyAI")
-st.write("""This app is designed to help users build and analyze a diversified investment portfolio by using an AI-driven approach to asset recommendations. 
-The app pulls historical stock data from various assets, calculates their returns, and applies a machine learning clustering algorithm (K-Means) to group the assets based on their return correlations.""")
-# Define the stock tickers you want to analyze
-tickers = ['AAPL', 'AMZN', 'GOOGL', 'MSFT', 'TSLA', 'NFLX', 'SBUX', 'HD', 'FND', 'JCTC', 'WMT', 'COST', 'MCD', 'BABA', 'BKNG', 'TJX']  # Replace with your asset list
 
-# Download historical data (adjust as needed)
-data = yf.download(tickers, start='2020-01-01', end='2024-01-01')
+# App title and description
+st.title("DiversifyAI")
+st.write("""This app helps users build and analyze a diversified investment portfolio using AI-driven asset recommendations. 
+The app pulls historical stock data from various assets, calculates their returns, and applies a K-Means clustering algorithm to group assets based on return correlations.
+Users can select which stocks to analyze and receive diversification suggestions based on clustering.""")
+ 
+# List of all available stock tickers
+tickers = ['AAPL', 'AMZN', 'GOOGL', 'MSFT', 'TSLA', 'NFLX', 'SBUX', 'HD', 'FND', 'JCTC', 'WMT', 'COST', 'MCD', 'BABA', 'BKNG', 'TJX']
 
-# Check and display the column names to understand the data
+# Select tickers for analysis
+selected_tickers = st.multiselect("Select Stocks to Analyze", tickers, default=tickers)
+
+# Download historical data for selected tickers
+data = yf.download(selected_tickers, start='2020-01-01', end='2024-01-01')
+
+# Display the column names to understand the data
+st.write("### Historical Data Columns")
 st.write(data.columns)
 
 # Use 'Close' prices to calculate returns
@@ -25,8 +31,8 @@ data = data['Close']
 # Calculate daily returns
 returns = data.pct_change().dropna()
 
-# Define weights for each asset (make sure they sum to 1)
-weights = np.array([0.2] * len(tickers))  # Equal weights for 5 assets (0.2 each)
+# Define equal weights for selected assets (make sure they sum to 1)
+weights = np.array([1.0 / len(selected_tickers)] * len(selected_tickers))
 
 # Calculate the weighted daily returns of the portfolio
 portfolio_returns = returns.dot(weights)
@@ -40,6 +46,7 @@ risk_free_rate = 0.01  # Set the risk-free rate (e.g., Treasury bond rate)
 sharpe_ratio = (portfolio_return - risk_free_rate) / portfolio_volatility
 
 # Output portfolio performance and Sharpe Ratio
+st.write(f'### Portfolio Performance')
 st.write(f'Annualized Portfolio Return: {portfolio_return:.2%}')
 st.write(f'Annualized Portfolio Volatility: {portfolio_volatility:.2%}')
 st.write(f'Sharpe Ratio: {sharpe_ratio:.2f}')
@@ -47,7 +54,7 @@ st.write(f'Sharpe Ratio: {sharpe_ratio:.2f}')
 # -------- AI-Driven Asset Recommendation based on Clustering -------- #
 st.write("### AI-Driven Asset Recommendation Based on Clustering")
 
-# Correlation Matrix
+# Correlation Matrix for selected assets
 corr_matrix = returns.corr()
 
 # Display Correlation Heatmap
@@ -62,13 +69,13 @@ kmeans.fit(corr_matrix)
 clusters = kmeans.labels_
 
 # Display Clustering Results
-clustered_assets = pd.DataFrame({'Ticker': tickers, 'Cluster': clusters})
+clustered_assets = pd.DataFrame({'Ticker': selected_tickers, 'Cluster': clusters})
 st.write("#### Asset Clusters")
 st.write(clustered_assets)
 
-# Recommend assets from a different cluster than current portfolio
+# Recommend assets from a different cluster than the selected portfolio
 st.write("#### Recommended Assets for Diversification")
-current_cluster = clusters[0]  # Assume we're starting with the first asset's cluster
+# For simplicity, assume we're starting with the first asset's cluster
+current_cluster = clusters[0]
 recommended_assets = clustered_assets[clustered_assets['Cluster'] != current_cluster]
-st.write(recommended_assets['Ticker'].tolist())  # Display the recommended assets
-
+st.write("Assets for diversification:", recommended_assets['Ticker'].tolist())
