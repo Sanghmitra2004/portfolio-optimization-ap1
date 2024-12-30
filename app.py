@@ -30,7 +30,7 @@ kmeans = KMeans(n_clusters=3)  # Adjust the number of clusters as needed
 kmeans.fit(corr_matrix)
 clusters = kmeans.labels_
 
-# Display the correlation heatmap
+# Display the correlation heatmap for all assets
 st.write("### Correlation Heatmap for All Assets")
 plt.figure(figsize=(10, 6))
 sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', vmin=-1, vmax=1)
@@ -74,7 +74,13 @@ if selected_stocks:
     if available_assets:
         st.write("#### Recommended Assets for Diversification")
         st.write(available_assets)  # Display the recommended assets
-    else:
-        st.write("No assets available for diversification. Try selecting a different set of assets.")
+
+    # Correlation heatmap for the selected stocks
+    st.write("### Correlation Heatmap for Selected Assets")
+    selected_corr_matrix = selected_returns.corr()
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(selected_corr_matrix, annot=True, cmap='coolwarm', vmin=-1, vmax=1)
+    st.pyplot(plt)
+
 else:
     st.write("Please select stocks to analyze.")
