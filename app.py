@@ -11,7 +11,7 @@ st.title("DiversifyAI")
 st.write("""This app helps users build and analyze a diversified investment portfolio using AI-driven asset recommendations. 
 The app pulls historical stock data from various assets, calculates their returns, and applies a K-Means clustering algorithm to group assets based on return correlations.
 Users can select which stocks to analyze and receive diversification suggestions based on clustering.""")
- 
+
 # List of all available stock tickers
 tickers = ['AAPL', 'AMZN', 'GOOGL', 'MSFT', 'TSLA', 'NFLX', 'SBUX', 'HD', 'FND', 'JCTC', 'WMT', 'COST', 'MCD', 'BABA', 'BKNG', 'TJX']
 
@@ -64,7 +64,8 @@ sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', vmin=-1, vmax=1)
 st.pyplot(plt)
 
 # Use K-Means Clustering to identify groups of similar assets
-kmeans = KMeans(n_clusters=3)  # Change the number of clusters as needed
+n_clusters = 3  # Change the number of clusters as needed
+kmeans = KMeans(n_clusters=n_clusters)
 kmeans.fit(corr_matrix)
 clusters = kmeans.labels_
 
@@ -76,7 +77,20 @@ st.write(clustered_assets)
 # Get the clusters for selected assets
 selected_clusters = clustered_assets[clustered_assets['Ticker'].isin(selected_tickers)]['Cluster'].values
 
+# Ensure that there are enough distinct clusters
+distinct_clusters = set(selected_clusters)
+
+# If all selected assets belong to the same cluster, show a warning
+if len(distinct_clusters) == 1:
+    st.warning("All selected assets belong to the same cluster. We recommend selecting assets from different clusters to improve diversification.")
+
 # Recommend assets from a different cluster than the selected portfolio
 st.write("#### Recommended Assets for Diversification")
 recommended_assets = clustered_assets[~clustered_assets['Cluster'].isin(selected_clusters)]
-st.write("Assets for diversification:", recommended_assets['Ticker'].tolist())
+
+# If no recommended assets exist, display a message
+if recommended_assets.empty:
+    st.write("No assets available for diversification. Try selecting a different set of assets.")
+
+else:
+    st.write("Assets for diversification:", recommended_assets['Ticker'].tolist())
