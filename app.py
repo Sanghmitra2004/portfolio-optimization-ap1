@@ -63,47 +63,54 @@ st.write(f'Sharpe Ratio: {sharpe_ratio:.2f}')
 # -------- AI-Driven Asset Recommendation based on Clustering -------- #
 st.write("### AI-Driven Asset Recommendation Based on Clustering")
 
-# Correlation Matrix for all assets
-corr_matrix = returns.corr()
+# Correlation Matrix for selected assets
+corr_matrix = returns[selected_tickers].corr()
+
+# Ensure there are no NaN values in the correlation matrix
+corr_matrix = corr_matrix.fillna(0)  # Replace NaNs with 0, or you can use another method like forward fill
 
 # Display Correlation Heatmap
-st.write("#### Correlation Heatmap for All Assets")
+st.write("#### Correlation Heatmap for Selected Assets")
 plt.figure(figsize=(10, 6))
 sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', vmin=-1, vmax=1)
 st.pyplot(plt)
 
 # Reshape the correlation matrix to be suitable for KMeans
 # Convert the correlation matrix into a 2D array where each asset's correlation values are treated as features
-corr_matrix_values = corr_matrix[selected_tickers].values
+corr_matrix_values = corr_matrix.values
 
-# Use K-Means Clustering to identify groups of similar assets
+# Check if there are enough distinct clusters
 n_clusters = 3  # Change the number of clusters as needed
-kmeans = KMeans(n_clusters=n_clusters)
-kmeans.fit(corr_matrix_values)
-clusters = kmeans.labels_
-
-# Create a DataFrame for clustering results
-clustered_assets = pd.DataFrame({'Ticker': selected_tickers, 'Cluster': clusters})
-st.write("#### Asset Clusters")
-st.write(clustered_assets)
-
-# Get the clusters for selected assets
-selected_clusters = clustered_assets['Cluster'].values
-
-# Ensure that there are enough distinct clusters
-distinct_clusters = set(selected_clusters)
-
-# If all selected assets belong to the same cluster, show a warning
-if len(distinct_clusters) == 1:
-    st.warning("All selected assets belong to the same cluster. We recommend selecting assets from different clusters to improve diversification.")
-
-# Recommend assets from a different cluster than the selected portfolio
-st.write("#### Recommended Assets for Diversification")
-recommended_assets = clustered_assets[~clustered_assets['Cluster'].isin(selected_clusters)]
-
-# If no recommended assets exist, display a message
-if recommended_assets.empty:
-    st.write("No assets available for diversification. Try selecting a different set of assets.")
+if len(selected_tickers) < n_clusters:
+    st.warning("You have selected fewer assets than the number of clusters. Adjust the number of clusters or select more assets.")
 
 else:
-    st.write("Assets for diversification:", recommended_assets['Ticker'].tolist())
+    # Use K-Means Clustering to identify groups of similar assets
+    kmeans = KMeans(n_clusters=n_clusters)
+    kmeans.fit(corr_matrix_values)
+    clusters = kmeans.labels_
+
+    # Create a DataFrame for clustering results
+    clustered_assets = pd.DataFrame({'Ticker': selected_tickers, 'Cluster': clusters})
+    st.write("#### Asset Clusters")
+    st.write(clustered_assets)
+
+    # Get the clusters for selected assets
+    selected_clusters = clustered_assets['Cluster'].values
+
+    # Ensure that there are enough distinct clusters
+    distinct_clusters = set(selected_clusters)
+
+    # If all selected assets belong to the same cluster, show a warning
+    if len(distinct_clusters) == 1:
+        st.warning("All selected assets belong to the same cluster. We recommend selecting assets from different clusters to improve diversification.")
+
+    # Recommend assets from a different cluster than the selected portfolio
+    st.write("#### Recommended Assets for Diversification")
+    recommended_assets = clustered_assets[~clustered_assets['Cluster'].isin(selected_clusters)]
+
+    # If no recommended assets exist, display a message
+    if recommended_assets.empty:
+        st.write("No assets available for diversification. Try selecting a different set of assets.")
+    else:
+        st.write("Assets for diversification:", recommended_assets['Ticker'].tolist())
